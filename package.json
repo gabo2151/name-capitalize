@@ -1,6 +1,6 @@
 {
   "name": "name-capitalize",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Lightweight, zero-dependency utility for smart capitalization of person names. Optimized for Latin scripts, handling compound surnames, particles (de, del, la), and Unicode characters.",
   "author": "Gabriel Galilea",
   "license": "MIT",
