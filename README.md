@@ -7,11 +7,15 @@
 
 Lightweight, zero-dependency utility for smart capitalization of person names. Handles particles (`de`, `van`, `von`…), hyphenated names, apostrophes, and Unicode characters.
 
+> **Looking for the legacy version?** See the [`v1` branch](../../tree/v1) for Node 16 / Angular 12 compatibility (`npm install name-capitalize@legacy`).
+
 ## Install
 
 ```bash
 npm install name-capitalize
 ```
+
+Requires Node 18 or higher.
 
 ## Usage
 
@@ -28,10 +32,15 @@ capitalizeName('gabriel garcía márquez')  // → 'Gabriel García Márquez'
 ## Behavior
 
 - Particles (`de`, `del`, `van`, `von`, `di`, `da`, `bin`…) stay lowercase unless they are the first word.
+- Multi-word particles (`van der`, `de la`, `de los`…) are handled as a unit.
 - Words after a hyphen or apostrophe are always capitalized (`Jean-Pierre`, `O'Higgins`).
 - Unicode letters are handled natively (`Ñ`, `Ö`, `Ş`, `Å`…).
 - Leading/trailing whitespace is trimmed.
 - Returns an empty string for empty, whitespace-only, or non-string input.
+
+## Changelog
+
+See [CHANGELOG.md](./CHANGELOG.md).
 
 ## License
 
