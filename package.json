@@ -1,6 +1,6 @@
 {
   "name": "name-capitalize",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Lightweight, zero-dependency utility for smart capitalization of person names. Optimized for Latin scripts, handling compound surnames, particles (de, del, la), and Unicode characters.",
   "author": "Gabriel Galilea",
   "license": "MIT",
@@ -16,8 +16,8 @@
     }
   },
   "scripts": {
-    "build": "tsdown src/index.ts --format cjs,esm --dts --clean",
-    "dev": "tsdown src/index.ts --format cjs,esm --dts --watch",
+    "build": "tsup src/index.ts --format cjs,esm --dts --clean",
+    "dev": "tsup src/index.ts --format cjs,esm --dts --watch",
     "test": "jest",
     "test:watch": "jest --watchAll"
   },
@@ -43,12 +43,12 @@
     "url": "https://github.com/gabo2151/name-capitalize/issues"
   },
   "devDependencies": {
-    "@types/jest": "~30.0.0",
-    "jest": "~30.3.0",
+    "@types/jest": "~27.5.2",
+    "jest": "~27.5.1",
     "jest-sonar-reporter": "~2.0.0",
-    "ts-jest": "~29.4.9",
-    "tsdown": "~0.21.9",
-    "typescript": "~6.0.2"
+    "ts-jest": "~27.1.5",
+    "tsup": "~6.7.0",
+    "typescript": "~4.9.5"
   },
   "files": [
     "dist",
@@ -56,6 +56,6 @@
     "LICENSE"
   ],
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=16.0.0"
   }
 }
