@@ -1,18 +1,18 @@
 {
   "name": "name-capitalize",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "Lightweight, zero-dependency utility for smart capitalization of person names. Optimized for Latin scripts, handling compound surnames, particles (de, del, la), and Unicode characters.",
   "author": "Gabriel Galilea",
   "license": "MIT",
-  "main": "dist/index.js",
-  "module": "./dist/index.mjs",
-  "types": "dist/index.d.ts",
   "homepage": "https://github.com/gabo2151/name-capitalize#readme",
+  "main": "dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "dist/index.d.cts",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
+      "types": "./dist/index.d.cts",
       "import": "./dist/index.mjs",
-      "require": "./dist/index.js"
+      "require": "./dist/index.cjs"
     }
   },
   "scripts": {
