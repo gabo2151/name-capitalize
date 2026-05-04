@@ -115,3 +115,11 @@ export function capitalizeName(text: string): string {
 
   return result.join('');
 }
+
+/**
+ * Alias for {@link capitalizeName}.
+ *
+ * @example
+ * namecase("JUAN de la MAZA") // → "Juan de la Maza"
+ */
+export const namecase = capitalizeName;

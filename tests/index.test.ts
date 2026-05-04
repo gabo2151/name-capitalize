@@ -1,4 +1,4 @@
-import { capitalizeName } from '../src/index';
+import { capitalizeName, namecase } from '../src/index';
 
 // ---------------------------------------------------------------------------
 // Helper to keep tests DRY
@@ -192,4 +192,25 @@ describe('normalizes pre-capitalized input correctly', () => {
     ["BERNARDO O'HIGGINS", "Bernardo O'Higgins"],
     ['Ludwig Van Beethoven', 'Ludwig van Beethoven'],
   ]);
+});
+
+// ---------------------------------------------------------------------------
+// 10. namecase alias
+// ---------------------------------------------------------------------------
+describe('namecase alias', () => {
+  it('is a function', () => {
+    expect(typeof namecase).toBe('function');
+  });
+
+  it('produces the same result as capitalizeName', () => {
+    const samples = [
+      'juan de la maza',
+      "o'higgins",
+      'jean-pierre dupont',
+      'LUDWIG VAN BEETHOVEN',
+    ];
+    samples.forEach((s) => {
+      expect(namecase(s)).toBe(capitalizeName(s));
+    });
+  });
 });
