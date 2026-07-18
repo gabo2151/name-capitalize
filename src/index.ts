@@ -1,17 +1,18 @@
-// Particles that should stay lowercase unless they're the first token of the full string
+// Particles that should stay lowercase unless they're the first token of the full string.
+// Each entry is a single word: multi-word particles (e.g. "van der", "de la") are
+// matched as their individual words, which must all be present here.
 const PARTICLES = new Set([
   // Spanish / Portuguese
   'de', 'del', 'la', 'las', 'los', 'el', 'al',
   'dos', 'das', 'da', 'do',
   // French
-  'de', 'du', 'des', 'le', 'les', 'y', 'e',
+  'du', 'des', 'le', 'les',
   // Italian
   'di', 'dello', 'della', 'degli', 'dei', 'dal', 'dalla',
-  // Germanic
-  'von', 'van', 'van der', 'van den', 'de la',
-  'zu', 'zum', 'zur', 'auf', 'am',
+  // Germanic / Dutch
+  'von', 'van', 'der', 'den', 'zu', 'zum', 'zur', 'auf', 'am',
   // Arabic / other
-  'al', 'el', 'bin', 'bint', 'ibn',
+  'bin', 'bint', 'ibn',
   // Conjunctions used in compound names
   'y', 'e', 'i',
 ]);
@@ -76,7 +77,7 @@ function tokenize(text: string): Token[] {
  * nameCapitalize("JUAN de la MAZA")    // → "Juan de la Maza"
  * nameCapitalize("o'higgins")          // → "O'Higgins"
  * nameCapitalize("jean-pierre dupont") // → "Jean-Pierre Dupont"
- * nameCapitalize("van der waals")      // → "van der Waals"  (particle first? no → lowercase)
+ * nameCapitalize("otto van den berg")  // → "Otto van den Berg" (der/den stay lowercase)
  */
 export function capitalizeName(text: string): string {
   if (!text || typeof text !== 'string') return '';

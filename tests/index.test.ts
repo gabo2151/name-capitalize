@@ -82,6 +82,12 @@ describe('particles stay lowercase', () => {
     // Italian
     ['leonardo di caprio', 'Leonardo di Caprio'],
     ['giovanni della casa', 'Giovanni della Casa'],
+    // Dutch multi-word particles (der / den must stay lowercase)
+    ['johannes van der waals', 'Johannes van der Waals'],
+    ['otto van den berg', 'Otto van den Berg'],
+    // Spanish multi-word particles
+    ['rosa de los ángeles', 'Rosa de los Ángeles'],
+    ['miguel de la maza', 'Miguel de la Maza'],
     // Conjunction in compound surname
     ['miguel de cervantes y saavedra', 'Miguel de Cervantes y Saavedra'],
   ]);

@@ -32,11 +32,24 @@ capitalizeName('gabriel garcía márquez')  // → 'Gabriel García Márquez'
 ## Behavior
 
 - Particles (`de`, `del`, `van`, `von`, `di`, `da`, `bin`…) stay lowercase unless they are the first word.
-- Multi-word particles (`van der`, `de la`, `de los`…) are handled as a unit.
+- Multi-word particles (`van der`, `de la`, `de los`…) work because each of their words is treated as a particle (`Otto van den Berg`).
 - Words after a hyphen or apostrophe are always capitalized (`Jean-Pierre`, `O'Higgins`).
 - Unicode letters are handled natively (`Ñ`, `Ö`, `Ş`, `Å`…).
 - Leading/trailing whitespace is trimmed.
 - Returns an empty string for empty, whitespace-only, or non-string input.
+
+### Known limitation: intra-word capitals
+
+The input is lowercased before re-capitalizing, so casing **inside** a word is not
+preserved. Names that carry a capital after the first letter come out normalized:
+
+```ts
+capitalizeName('RONALD MCDONALD')  // → 'Ronald Mcdonald'  (not 'McDonald')
+capitalizeName('DeShawn')          // → 'Deshawn'
+```
+
+Only the first letter of each name segment is uppercased. `Mc`/`Mac` prefixes and
+camel-cased names are out of scope by design, to keep the library small and predictable.
 
 ## Changelog
 
