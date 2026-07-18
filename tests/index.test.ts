@@ -82,6 +82,12 @@ describe('particles stay lowercase', () => {
     // Italian
     ['leonardo di caprio', 'Leonardo di Caprio'],
     ['giovanni della casa', 'Giovanni della Casa'],
+    // Dutch multi-word particles (der / den must stay lowercase)
+    ['johannes van der waals', 'Johannes van der Waals'],
+    ['otto van den berg', 'Otto van den Berg'],
+    // Spanish multi-word particles
+    ['rosa de los ángeles', 'Rosa de los Ángeles'],
+    ['miguel de la maza', 'Miguel de la Maza'],
     // Conjunction in compound surname
     ['miguel de cervantes y saavedra', 'Miguel de Cervantes y Saavedra'],
   ]);
@@ -192,6 +198,59 @@ describe('normalizes pre-capitalized input correctly', () => {
     ["BERNARDO O'HIGGINS", "Bernardo O'Higgins"],
     ['Ludwig Van Beethoven', 'Ludwig van Beethoven'],
   ]);
+});
+
+// ---------------------------------------------------------------------------
+// 9b. Options: particle overrides & Mc prefix
+// ---------------------------------------------------------------------------
+describe('options: particle overrides', () => {
+  it('ignoreParticles: treats a default particle as a normal word', () => {
+    expect(capitalizeName('dick van dyke', { ignoreParticles: ['van'] })).toBe('Dick Van Dyke');
+    // unaffected particles still behave
+    expect(capitalizeName('juan de la maza', { ignoreParticles: ['van'] })).toBe('Juan de la Maza');
+  });
+
+  it('extraParticles: adds new lowercase particles', () => {
+    expect(capitalizeName('joan sa costa', { extraParticles: ['sa'] })).toBe('Joan sa Costa');
+  });
+
+  it('particles: replaces the whole set', () => {
+    // only "of" stays lowercase now; "de" is no longer a particle
+    expect(capitalizeName('juan de la maza', { particles: ['of'] })).toBe('Juan De La Maza');
+    expect(capitalizeName('john of gaunt', { particles: ['of'] })).toBe('John of Gaunt');
+  });
+
+  it('extra/ignore are case-insensitive', () => {
+    expect(capitalizeName('dick van dyke', { ignoreParticles: ['VAN'] })).toBe('Dick Van Dyke');
+    expect(capitalizeName('joan sa costa', { extraParticles: ['SA'] })).toBe('Joan sa Costa');
+  });
+
+  it('no options behaves exactly like the default call', () => {
+    expect(capitalizeName('juan de la maza', {})).toBe('Juan de la Maza');
+  });
+});
+
+describe('options: mcPrefix', () => {
+  it('is off by default', () => {
+    expect(capitalizeName('ronald mcdonald')).toBe('Ronald Mcdonald');
+  });
+
+  it('capitalizes the letter after Mc when enabled', () => {
+    expect(capitalizeName('ronald mcdonald', { mcPrefix: true })).toBe('Ronald McDonald');
+    expect(capitalizeName('mcallister', { mcPrefix: true })).toBe('McAllister');
+  });
+
+  it('handles Mc after hyphen and apostrophe', () => {
+    expect(capitalizeName("seamus o'brien-mcallister", { mcPrefix: true })).toBe("Seamus O'Brien-McAllister");
+  });
+
+  it('leaves a bare "mc" untouched', () => {
+    expect(capitalizeName('mc', { mcPrefix: true })).toBe('Mc');
+  });
+
+  it('does not touch Mac', () => {
+    expect(capitalizeName('macarthur', { mcPrefix: true })).toBe('Macarthur');
+  });
 });
 
 // ---------------------------------------------------------------------------
