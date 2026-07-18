@@ -1,7 +1,7 @@
 // Particles that should stay lowercase unless they're the first token of the full string.
 // Each entry is a single word: multi-word particles (e.g. "van der", "de la") are
 // matched as their individual words, which must all be present here.
-const PARTICLES = new Set([
+const DEFAULT_PARTICLES = new Set([
   // Spanish / Portuguese
   'de', 'del', 'la', 'las', 'los', 'el', 'al',
   'dos', 'das', 'da', 'do',
@@ -17,6 +17,24 @@ const PARTICLES = new Set([
   'y', 'e', 'i',
 ]);
 
+/** Options for {@link capitalizeName}. All fields are optional and non-breaking. */
+export interface NameCapitalizeOptions {
+  /**
+   * Replace the built-in particle list entirely. Provide the full set of words
+   * that should stay lowercase (unless they are the first word).
+   */
+  particles?: Iterable<string>;
+  /** Add extra particles on top of the built-in (or `particles`) list. */
+  extraParticles?: Iterable<string>;
+  /** Remove particles from the built-in (or `particles`) list. */
+  ignoreParticles?: Iterable<string>;
+  /**
+   * Capitalize the letter after a `Mc` prefix (`mcdonald` → `McDonald`).
+   * Opt-in (default `false`); does not touch `Mac`, which needs an exception list.
+   */
+  mcPrefix?: boolean;
+}
+
 type Separator = '-' | "'" | ' ';
 
 interface Token {
@@ -30,6 +48,31 @@ interface Token {
  */
 function capitalizeFirst(word: string): string {
   return word.replace(/^(\p{L})(\p{L}*)/u, (_, first, rest) => first.toUpperCase() + rest);
+}
+
+/**
+ * Uppercases the letter following a `Mc` prefix. Expects a word whose first
+ * letter is already capitalized ("Mcdonald" → "McDonald"). Leaves a bare "Mc"
+ * (no following letter) untouched. Does not handle "Mac" — that needs an
+ * exception dictionary and is out of scope.
+ */
+function capitalizeMcPrefix(word: string): string {
+  return word.replace(/^(Mc)(\p{L})/u, (_, mc, next) => mc + next.toUpperCase());
+}
+
+/**
+ * Builds the effective particle set for a call. Returns the shared default set
+ * unchanged (no allocation) when no particle overrides are supplied.
+ */
+function resolveParticles(options?: NameCapitalizeOptions): Set<string> {
+  if (!options || (!options.particles && !options.extraParticles && !options.ignoreParticles)) {
+    return DEFAULT_PARTICLES;
+  }
+
+  const set = new Set(options.particles ?? DEFAULT_PARTICLES);
+  if (options.extraParticles) for (const p of options.extraParticles) set.add(p.toLowerCase());
+  if (options.ignoreParticles) for (const p of options.ignoreParticles) set.delete(p.toLowerCase());
+  return set;
 }
 
 /**
@@ -71,6 +114,7 @@ function tokenize(text: string): Token[] {
  * - Handles Unicode letters natively (accents, ñ, ü, etc.).
  *
  * @param text - Raw name string (any casing).
+ * @param options - Optional overrides for particles and `Mc` handling.
  * @returns Properly capitalized name.
  *
  * @example
@@ -78,12 +122,19 @@ function tokenize(text: string): Token[] {
  * nameCapitalize("o'higgins")          // → "O'Higgins"
  * nameCapitalize("jean-pierre dupont") // → "Jean-Pierre Dupont"
  * nameCapitalize("otto van den berg")  // → "Otto van den Berg" (der/den stay lowercase)
+ * nameCapitalize("Dick Van Dyke", { ignoreParticles: ["van"] }) // → "Dick Van Dyke"
+ * nameCapitalize("ronald mcdonald", { mcPrefix: true })          // → "Ronald McDonald"
  */
-export function capitalizeName(text: string): string {
+export function capitalizeName(text: string, options?: NameCapitalizeOptions): string {
   if (!text || typeof text !== 'string') return '';
 
   const normalized = text.trim().toLowerCase();
   if (!normalized) return '';
+
+  const particles = resolveParticles(options);
+  const cap = options?.mcPrefix
+    ? (word: string) => capitalizeMcPrefix(capitalizeFirst(word))
+    : capitalizeFirst;
 
   const tokens = tokenize(normalized);
 
@@ -97,7 +148,7 @@ export function capitalizeName(text: string): string {
     const isFirstWord = index === firstWordIndex;
 
     // First word always gets capitalized, regardless of particle status
-    if (isFirstWord) return capitalizeFirst(token.value);
+    if (isFirstWord) return cap(token.value);
 
     // What separator precedes this word?
     const prevToken = tokens[index - 1];
@@ -105,13 +156,13 @@ export function capitalizeName(text: string): string {
 
     // After hyphen or apostrophe → always capitalize (Jean-Pierre, O'Higgins)
     if (prevSep === '-' || prevSep === "'") {
-      return capitalizeFirst(token.value);
+      return cap(token.value);
     }
 
     // After space → keep particles lowercase
-    if (PARTICLES.has(token.value)) return token.value;
+    if (particles.has(token.value)) return token.value;
 
-    return capitalizeFirst(token.value);
+    return cap(token.value);
   });
 
   return result.join('');
